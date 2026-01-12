@@ -27,7 +27,3 @@ Integration.belongsTo(Business, { foreignKey: 'businessId' });
 
 export { User, Business, Permission, Integration };
 
-Business.hasMany(Permission, { foreignKey: 'businessId' });
-Permission.belongsTo(Business, { foreignKey: 'businessId' });
-
-export { User, Business, Permission };

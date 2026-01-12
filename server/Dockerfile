@@ -14,6 +14,9 @@ RUN npm install
 COPY server ./server
 COPY shared ./shared
 
+# Install TypeScript types
+RUN cd server && npm install --save-dev @types/node
+
 # Build application
 RUN npm run build:server
 
