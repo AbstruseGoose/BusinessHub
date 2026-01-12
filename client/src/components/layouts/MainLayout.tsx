@@ -30,6 +30,7 @@ import {
   AdminPanelSettings,
   Logout,
   ChevronLeft,
+  Extension,
 } from '@mui/icons-material';
 import { theme } from '@/theme/colors';
 import { useAuthStore } from '@/stores/authStore';
