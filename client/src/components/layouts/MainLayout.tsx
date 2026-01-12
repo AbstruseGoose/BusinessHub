@@ -84,6 +84,7 @@ const MainLayout: React.FC = () => {
     { path: '/documents', label: 'Documents', icon: <Folder /> },
     { path: '/phone', label: 'Phone', icon: <Phone /> },
     { path: '/tasks', label: 'Tasks', icon: <CheckCircle /> },
+    { path: '/integrations', label: 'Integrations', icon: <Extension /> },
   ];
 
   if (user?.role === UserRole.ADMIN) {

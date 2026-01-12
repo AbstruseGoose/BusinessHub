@@ -18,6 +18,8 @@ import CalendarPage from '@/pages/CalendarPage';
 import DocumentsPage from '@/pages/DocumentsPage';
 import PhonePage from '@/pages/PhonePage';
 import TasksPage from '@/pages/TasksPage';
+import IntegrationsPage from '@/pages/IntegrationsPage';
+import MeshtasticMapPage from '@/pages/MeshtasticMapPage';
 import AdminPage from '@/pages/admin/AdminPage';
 
 const queryClient = new QueryClient({
@@ -59,6 +61,8 @@ function App() {
               <Route path="/documents" element={<DocumentsPage />} />
               <Route path="/phone" element={<PhonePage />} />
               <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/integrations" element={<IntegrationsPage />} />
+              <Route path="/integrations/meshtastic/:integrationId" element={<MeshtasticMapPage />} />
               <Route path="/admin" element={<AdminPage />} />
             </Route>
           </Routes>

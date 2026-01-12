@@ -23,7 +23,9 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (email: string, password: string) => {
         try {
+          console.log('Login API call to:', api.defaults.baseURL + '/auth/login');
           const response = await api.post('/auth/login', { email, password });
+          console.log('Login response:', response.data);
           const { token, user } = response.data;
           
           localStorage.setItem('token', token);

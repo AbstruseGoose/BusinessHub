@@ -5,6 +5,8 @@ export enum UserRole {
   ASSISTANT = 'ASSISTANT'
 }
 
+export * from './integrations';
+
 export interface User {
   id: string;
   email: string;

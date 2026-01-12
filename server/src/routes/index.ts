@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoutes from './auth';
 import usersRoutes from './users';
 import businessesRoutes from './businesses';
+import integrationsRoutes from './integrations';
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router.get('/', (req, res) => {
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
 router.use('/businesses', businessesRoutes);
+router.use('/integrations', integrationsRoutes);
 
 // Placeholder routes for other features
 router.use('/emails', (req, res) => res.json({ message: 'Email routes coming soon' }));

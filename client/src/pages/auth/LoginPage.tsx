@@ -30,10 +30,15 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
+      const trimmedEmail = email.trim();
+      const trimmedPassword = password.trim();
+      console.log('Attempting login with:', { email: trimmedEmail });
+      await login(trimmedEmail, trimmedPassword);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      console.error('Login error:', err);
+      const errorMsg = err.response?.data?.error || err.message || 'Login failed. Please try again.';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
