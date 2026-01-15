@@ -4,6 +4,7 @@ import { Integration, Business } from '../models';
 import { UserRole } from '@businesshub/shared';
 import { encryptIntegrationCredentials, decryptIntegrationCredentials } from '../utils/encryption';
 import { integrationLimiter } from '../middleware/rateLimiter';
+import { requirePermission, PermissionType } from '../middleware/permissions';
 
 interface AuthRequest extends Request {
   user?: {
@@ -15,8 +16,8 @@ interface AuthRequest extends Request {
 
 const router = Router();
 
-// Get integrations for a business
-router.get('/business/:businessId', authenticate, async (req: AuthRequest, res: Response) => {
+// Get integrations for a business - requires access permission
+router.get('/business/:businessId', authenticate, requirePermission(PermissionType.ACCESS_INTEGRATIONS), async (req: AuthRequest, res: Response) => {
   try {
     const { businessId } = req.params;
 
