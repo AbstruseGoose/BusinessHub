@@ -39,7 +39,7 @@ User.init(
       allowNull: false
     },
     role: {
-      type: DataTypes.ENUM(...Object.values(UserRole)),
+      type: DataTypes.STRING(50),
       allowNull: false,
       defaultValue: UserRole.ASSISTANT
     },

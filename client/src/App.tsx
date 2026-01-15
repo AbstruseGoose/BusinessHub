@@ -19,6 +19,7 @@ import DocumentsPage from '@/pages/DocumentsPage';
 import PhonePage from '@/pages/PhonePage';
 import TasksPage from '@/pages/TasksPage';
 import IntegrationsPage from '@/pages/IntegrationsPage';
+import IntegrationViewerPage from '@/pages/IntegrationViewerPage';
 import MeshtasticMapPage from '@/pages/MeshtasticMapPage';
 import AdminPage from '@/pages/admin/AdminPage';
 
@@ -64,6 +65,7 @@ function App() {
               <Route path="/business/:businessId/documents" element={<DocumentsPage />} />
               <Route path="/business/:businessId/phone" element={<PhonePage />} />
               <Route path="/business/:businessId/integrations" element={<IntegrationsPage />} />
+              <Route path="/business/:businessId/integrations/view/:integrationId" element={<IntegrationViewerPage />} />
               <Route path="/business/:businessId/integrations/meshtastic/:integrationId" element={<MeshtasticMapPage />} />
               
               {/* Backwards compatibility - redirect old routes */}
@@ -72,6 +74,7 @@ function App() {
               <Route path="/documents" element={<DocumentsPage />} />
               <Route path="/phone" element={<PhonePage />} />
               <Route path="/integrations" element={<IntegrationsPage />} />
+              <Route path="/integrations/view/:integrationId" element={<IntegrationViewerPage />} />
               <Route path="/integrations/meshtastic/:integrationId" element={<MeshtasticMapPage />} />
               
               <Route path="/admin" element={<AdminPage />} />

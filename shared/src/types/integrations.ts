@@ -6,7 +6,16 @@ export enum IntegrationType {
   SIP_PHONE = 'SIP_PHONE',
   CUSTOM_IFRAME = 'CUSTOM_IFRAME',
   API_INTEGRATION = 'API_INTEGRATION',
-  NETWORK_DRIVE = 'NETWORK_DRIVE'
+  NETWORK_DRIVE = 'NETWORK_DRIVE',
+  QUICKBOOKS = 'QUICKBOOKS',
+  SHOPIFY = 'SHOPIFY',
+  STRIPE = 'STRIPE',
+  GOOGLE_WORKSPACE = 'GOOGLE_WORKSPACE',
+  MICROSOFT_365 = 'MICROSOFT_365',
+  SLACK = 'SLACK',
+  ZOOM = 'ZOOM',
+  TRELLO = 'TRELLO',
+  ASANA = 'ASANA'
 }
 
 export interface Integration {
@@ -21,17 +30,39 @@ export interface Integration {
   updatedAt: Date;
 }
 
+export interface IntegrationCredentials {
+  username?: string;
+  password?: string;
+  email?: string;
+  apiKey?: string;
+  apiSecret?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  clientId?: string;
+  clientSecret?: string;
+  tenantId?: string;
+  token?: string;
+  webhookSecret?: string;
+}
+
 export interface IntegrationConfig {
-  // Proxy Portal Config
-  portalUrl?: string;
-  autoLoginEnabled?: boolean;
+  // General iframe settings
+  url?: string;
+  iframeHeight?: string;
+  allowFullscreen?: boolean;
+  openInFrame?: boolean; // Always true for internal browser
+
+  // Credentials
+  credentials?: IntegrationCredentials;
+  autoLogin?: boolean;
   loginUrl?: string;
   usernameField?: string;
   passwordField?: string;
-  credentials?: {
-    username: string;
-    passwordEncrypted: string;
-  };
+  submitButtonSelector?: string;
+
+  // Proxy Portal Config
+  portalUrl?: string;
+  autoLoginEnabled?: boolean;
 
   // Meshtastic Config
   meshtasticServerUrl?: string;
@@ -42,12 +73,66 @@ export interface IntegrationConfig {
 
   // Custom Iframe Config
   iframeUrl?: string;
-  iframeHeight?: string;
-  allowFullscreen?: boolean;
   sandbox?: string[];
 
   // API Integration Config
   apiEndpoint?: string;
+  
+  // Network Drive Config
+  serverAddress?: string;
+  sharePath?: string;
+  mountPoint?: string;
+  protocol?: 'SMB' | 'NFS' | 'WebDAV' | 'FTP' | 'SFTP';
+  domain?: string;
+  port?: number;
+  
+  // Proton Email Config
+  imapServer?: string;
+  imapPort?: number;
+  smtpServer?: string;
+  smtpPort?: number;
+  useTLS?: boolean;
+  
+  // SIP Phone Config
+  sipServer?: string;
+  sipPort?: number;
+  extension?: string;
+  codec?: string;
+  stunServer?: string;
+  
+  // QuickBooks Config
+  realmId?: string;
+  environment?: 'sandbox' | 'production';
+  
+  // Shopify Config
+  storeName?: string;
+  
+  // Stripe Config
+  publishableKey?: string;
+  
+  // Google Workspace Config
+  scopes?: string[];
+  
+  // Microsoft 365 Config
+  redirectUri?: string;
+  
+  // Slack Config
+  workspaceId?: string;
+  channelId?: string;
+  botToken?: string;
+  
+  // Zoom Config
+  sdkKey?: string;
+  sdkSecret?: string;
+  meetingNumber?: string;
+  
+  // Trello Config
+  boardId?: string;
+  listIds?: string[];
+  
+  // Asana Config
+  workspaceId?: string;
+  projectId?: string;
   apiKey?: string;
   apiSecret?: string;
   authType?: 'bearer' | 'basic' | 'oauth2' | 'custom';

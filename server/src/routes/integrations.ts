@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { authenticate, authorize } from '../middleware/auth';
 import { Integration, Business } from '../models';
 import { UserRole } from '@businesshub/shared';
+import { encryptIntegrationCredentials, decryptIntegrationCredentials } from '../utils/encryption';
 
 interface AuthRequest extends Request {
   user?: {
@@ -22,10 +23,34 @@ router.get('/business/:businessId', authenticate, async (req: AuthRequest, res: 
       where: { businessId, isActive: true }
     });
 
+    // Return without decrypting credentials for security
     res.json(integrations);
   } catch (error) {
     console.error('Get integrations error:', error);
     res.status(500).json({ error: 'Failed to fetch integrations' });
+  }
+});
+
+// Get single integration with decrypted credentials (for iframe viewer)
+router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const integration = await Integration.findByPk(id);
+    
+    if (!integration) {
+      return res.status(404).json({ error: 'Integration not found' });
+    }
+
+    // Decrypt credentials for viewer
+    const decryptedConfig = decryptIntegrationCredentials(integration.config);
+    
+    res.json({
+      ...integration.toJSON(),
+      config: decryptedConfig
+    });
+  } catch (error) {
+    console.error('Get integration error:', error);
+    res.status(500).json({ error: 'Failed to fetch integration' });
   }
 });
 
@@ -40,12 +65,15 @@ router.post('/', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), asyn
       return res.status(404).json({ error: 'Business not found' });
     }
 
+    // Encrypt sensitive credentials
+    const encryptedConfig = encryptIntegrationCredentials(config);
+
     const integration = await Integration.create({
       businessId,
       name,
       type,
       description,
-      config,
+      config: encryptedConfig,
       isActive: true
     });
 
@@ -67,10 +95,13 @@ router.put('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), as
       return res.status(404).json({ error: 'Integration not found' });
     }
 
+    // Encrypt sensitive credentials
+    const encryptedConfig = encryptIntegrationCredentials(config);
+
     await integration.update({
       name,
       description,
-      config,
+      config: encryptedConfig,
       isActive
     });
 
