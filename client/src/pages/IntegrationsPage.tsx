@@ -23,7 +23,8 @@ import { api } from '@/lib/api';
 import { useBusinessStore } from '@/stores/businessStore';
 
 const IntegrationsPage: React.FC = () => {
-  const { currentBusiness } = useBusinessStore();
+  const { businesses, selectedBusinessId } = useBusinessStore();
+  const currentBusiness = businesses.find(b => b.id === selectedBusinessId);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIntegration, setEditingIntegration] = useState<Integration | null>(null);

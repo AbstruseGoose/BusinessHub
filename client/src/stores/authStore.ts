@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, UserRole } from '@businesshub/shared';
+import { User } from '@businesshub/shared';
 import { api } from '@/lib/api';
 import { socketService } from '@/lib/socket';
 
@@ -16,7 +16,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       token: null,
       isAuthenticated: false,

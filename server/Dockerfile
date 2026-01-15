@@ -7,15 +7,12 @@ COPY package*.json ./
 COPY server/package*.json ./server/
 COPY shared/package*.json ./shared/
 
-# Install dependencies
+# Install dependencies (including devDependencies for build)
 RUN npm install
 
 # Copy source code
 COPY server ./server
 COPY shared ./shared
-
-# Install TypeScript types
-RUN cd server && npm install --save-dev @types/node
 
 # Build application
 RUN npm run build:server

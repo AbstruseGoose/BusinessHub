@@ -19,12 +19,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Switch,
-  FormControlLabel,
   Tabs,
   Tab,
 } from '@mui/material';
@@ -33,7 +27,6 @@ import {
   Edit,
   Delete,
   PersonAdd,
-  Business as BusinessIcon,
 } from '@mui/icons-material';
 import { theme } from '@/theme/colors';
 import { api } from '@/lib/api';
