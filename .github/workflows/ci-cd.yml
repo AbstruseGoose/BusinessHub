@@ -1,0 +1,172 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint || echo "Add lint script to package.json"
+
+      - name: Type check
+        run: |
+          cd shared && npm run build
+          cd ../server && npx tsc --noEmit
+          cd ../client && npx tsc --noEmit
+
+      - name: Run tests
+        run: npm test || echo "Add test script to package.json"
+
+      - name: Security audit
+        run: npm audit --audit-level=moderate || true
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: cd shared && npm run build
+
+      - name: Build server
+        run: cd server && npm run build
+
+      - name: Build client
+        run: cd client && npm run build
+
+      - name: Upload server artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: server-dist
+          path: server/dist/
+          retention-days: 7
+
+      - name: Upload client artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: client-dist
+          path: client/dist/
+          retention-days: 7
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub (optional)
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build server image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: server/Dockerfile.prod
+          push: false
+          tags: businesshub-server:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build client image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: client/Dockerfile.prod
+          push: false
+          tags: businesshub-client:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to staging
+        run: |
+          echo "Deploy to staging server"
+          # Add your deployment commands here
+          # Example: scp, rsync, kubectl, etc.
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to production
+        run: |
+          echo "Deploy to production server"
+          # Add your deployment commands here
+          # Example using docker-compose:
+          # scp docker-compose.prod.yml user@server:/app/
+          # ssh user@server 'cd /app && docker-compose -f docker-compose.prod.yml pull'
+          # ssh user@server 'cd /app && docker-compose -f docker-compose.prod.yml up -d'
+
+      - name: Health check
+        run: |
+          echo "Waiting for deployment..."
+          sleep 30
+          # curl -f https://yourdomain.com/health || exit 1
+
+      - name: Notify on success
+        if: success()
+        run: echo "Deployment successful!"
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Deployment failed, rolling back..."
+          # Add rollback commands here

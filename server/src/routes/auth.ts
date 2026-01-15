@@ -4,8 +4,12 @@ import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import { User } from '../models';
 import { UserRole } from '@businesshub/shared';
+import { authLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
+
+// Apply auth rate limiter to all auth routes
+router.use(authLimiter);
 
 // Register
 router.post(

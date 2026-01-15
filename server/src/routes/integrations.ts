@@ -3,6 +3,7 @@ import { authenticate, authorize } from '../middleware/auth';
 import { Integration, Business } from '../models';
 import { UserRole } from '@businesshub/shared';
 import { encryptIntegrationCredentials, decryptIntegrationCredentials } from '../utils/encryption';
+import { integrationLimiter } from '../middleware/rateLimiter';
 
 interface AuthRequest extends Request {
   user?: {
@@ -84,8 +85,8 @@ router.post('/', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), asyn
   }
 });
 
-// Update integration
-router.put('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), async (req: AuthRequest, res: Response) => {
+// Update integration - with rate limiting
+router.put('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), integrationLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { name, description, config, isActive } = req.body;
