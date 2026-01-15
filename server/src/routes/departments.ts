@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Department } from '../models/Department';
-import { authenticate } from '../middleware/auth';
-import { authorize } from '../middleware/authorize';
+import { authenticate, authorize } from '../middleware/auth';
+import { UserRole } from '@businesshub/shared';
 
 const router = Router();
 
@@ -21,7 +21,7 @@ router.get('/business/:businessId', authenticate, async (req, res) => {
 });
 
 // Create a new department
-router.post('/', authenticate, authorize(['ADMIN', 'MANAGER']), async (req, res) => {
+router.post('/', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), async (req, res) => {
   try {
     const { businessId, name, description } = req.body;
     const department = await Department.create({
@@ -37,7 +37,7 @@ router.post('/', authenticate, authorize(['ADMIN', 'MANAGER']), async (req, res)
 });
 
 // Update a department
-router.put('/:id', authenticate, authorize(['ADMIN', 'MANAGER']), async (req, res) => {
+router.put('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description } = req.body;
@@ -56,7 +56,7 @@ router.put('/:id', authenticate, authorize(['ADMIN', 'MANAGER']), async (req, re
 });
 
 // Delete a department
-router.delete('/:id', authenticate, authorize(['ADMIN']), async (req, res) => {
+router.delete('/:id', authenticate, authorize(UserRole.ADMIN), async (req, res) => {
   try {
     const { id } = req.params;
     const department = await Department.findByPk(id);
