@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -25,6 +25,7 @@ import { useBusinessStore } from '@/stores/businessStore';
 
 const IntegrationsPage: React.FC = () => {
   const { businessId } = useParams<{ businessId?: string }>();
+  const navigate = useNavigate();
   const { businesses, selectedBusinessId } = useBusinessStore();
   const effectiveBusinessId = businessId || selectedBusinessId;
   const currentBusiness = businesses.find(b => b.id === effectiveBusinessId);
@@ -888,10 +889,10 @@ const IntegrationsPage: React.FC = () => {
               <TextField
                 fullWidth
                 label="Workspace ID"
-                value={formData.config.workspaceId || ''}
+                value={formData.config.slackWorkspaceId || ''}
                 onChange={(e) => setFormData({
                   ...formData,
-                  config: { ...formData.config, workspaceId: e.target.value }
+                  config: { ...formData.config, slackWorkspaceId: e.target.value }
                 })}
                 margin="normal"
               />
@@ -1031,10 +1032,10 @@ const IntegrationsPage: React.FC = () => {
               <TextField
                 fullWidth
                 label="Workspace ID (optional)"
-                value={formData.config.workspaceId || ''}
+                value={formData.config.asanaWorkspaceId || ''}
                 onChange={(e) => setFormData({
                   ...formData,
-                  config: { ...formData.config, workspaceId: e.target.value }
+                  config: { ...formData.config, asanaWorkspaceId: e.target.value }
                 })}
                 margin="normal"
               />

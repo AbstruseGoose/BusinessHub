@@ -108,7 +108,8 @@ const IntegrationViewerPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (integration?.config.autoLogin) {
+    const config = integration?.config as any;
+    if (config?.autoLogin) {
       handleAutoLogin();
     }
   }, [integration]);

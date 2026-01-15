@@ -117,7 +117,7 @@ export interface IntegrationConfig {
   redirectUri?: string;
   
   // Slack Config
-  workspaceId?: string;
+  slackWorkspaceId?: string;
   channelId?: string;
   botToken?: string;
   
@@ -131,7 +131,7 @@ export interface IntegrationConfig {
   listIds?: string[];
   
   // Asana Config
-  workspaceId?: string;
+  asanaWorkspaceId?: string;
   projectId?: string;
   apiKey?: string;
   apiSecret?: string;
