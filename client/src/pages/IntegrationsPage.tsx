@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -23,8 +24,10 @@ import { api } from '@/lib/api';
 import { useBusinessStore } from '@/stores/businessStore';
 
 const IntegrationsPage: React.FC = () => {
+  const { businessId } = useParams<{ businessId?: string }>();
   const { businesses, selectedBusinessId } = useBusinessStore();
-  const currentBusiness = businesses.find(b => b.id === selectedBusinessId);
+  const effectiveBusinessId = businessId || selectedBusinessId;
+  const currentBusiness = businesses.find(b => b.id === effectiveBusinessId);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIntegration, setEditingIntegration] = useState<Integration | null>(null);

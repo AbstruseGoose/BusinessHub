@@ -153,12 +153,36 @@ export interface CallLog {
 export interface Permission {
   userId: string;
   businessId: string;
+  departmentId?: string;
   canAccessEmails: boolean;
   canAccessCalendar: boolean;
   canAccessDocuments: boolean;
   canAccessPhone: boolean;
   canManageTasks: boolean;
+  canAccessIntegrations: boolean;
+  canManageDepartments: boolean;
   grantedAt: Date;
+}
+
+// Dashboard Config Types
+export interface DashboardWidget {
+  id: string;
+  type: 'stats' | 'recent_tasks' | 'calendar' | 'emails' | 'chart' | 'custom';
+  position: number;
+  config?: any;
+}
+
+export interface DashboardConfig {
+  id: string;
+  businessId: string;
+  userId?: string;
+  config: {
+    widgets: string[];
+    statsToShow: string[];
+    layout?: 'grid' | 'list';
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // API Response Types

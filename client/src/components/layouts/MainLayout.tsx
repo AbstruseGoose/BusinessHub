@@ -78,18 +78,22 @@ const MainLayout: React.FC = () => {
   }, [selectedBusinessId]);
 
   const menuItems = [
-    { path: '/', label: 'Dashboard', icon: <Dashboard /> },
-    { path: '/businesses', label: 'Businesses', icon: <Business /> },
-    { path: '/emails', label: 'Emails', icon: <Email /> },
-    { path: '/calendar', label: 'Calendar', icon: <CalendarMonth /> },
-    { path: '/documents', label: 'Documents', icon: <Folder /> },
-    { path: '/phone', label: 'Phone', icon: <Phone /> },
-    { path: '/tasks', label: 'Tasks', icon: <CheckCircle /> },
-    { path: '/integrations', label: 'Integrations', icon: <Extension /> },
+    { path: '/', label: 'Dashboard', icon: <Dashboard />, section: 'main' },
+    { path: '/businesses', label: 'Businesses', icon: <Business />, section: 'main' },
+    { path: '/tasks', label: 'Tasks', icon: <CheckCircle />, section: 'main' },
   ];
 
+  // Business-specific menu items
+  const businessSpecificItems = selectedBusinessId ? [
+    { path: `/business/${selectedBusinessId}/emails`, label: 'Emails', icon: <Email />, section: 'business' },
+    { path: `/business/${selectedBusinessId}/calendar`, label: 'Calendar', icon: <CalendarMonth />, section: 'business' },
+    { path: `/business/${selectedBusinessId}/documents`, label: 'Documents', icon: <Folder />, section: 'business' },
+    { path: `/business/${selectedBusinessId}/phone`, label: 'Phone', icon: <Phone />, section: 'business' },
+    { path: `/business/${selectedBusinessId}/integrations`, label: 'Integrations', icon: <Extension />, section: 'business' },
+  ] : [];
+
   if (user?.role === UserRole.ADMIN) {
-    menuItems.push({ path: '/admin', label: 'Admin', icon: <AdminPanelSettings /> });
+    menuItems.push({ path: '/admin', label: 'Admin', icon: <AdminPanelSettings />, section: 'main' });
   }
 
   const handleLogout = () => {
@@ -184,6 +188,7 @@ const MainLayout: React.FC = () => {
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto', mt: 2 }}>
+          {/* Main Menu Items */}
           <List>
             {menuItems.map((item) => (
               <ListItemButton
@@ -221,6 +226,63 @@ const MainLayout: React.FC = () => {
             ))}
           </List>
 
+          {/* Business-Specific Section */}
+          {selectedBusiness && businessSpecificItems.length > 0 && (
+            <>
+              <Divider sx={{ my: 2, mx: 2 }} />
+              <Typography
+                variant="caption"
+                sx={{
+                  px: 3,
+                  py: 1,
+                  display: 'block',
+                  color: theme.colors.text.secondary,
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                }}
+              >
+                {selectedBusiness.name}
+              </Typography>
+              <List>
+                {businessSpecificItems.map((item) => (
+                  <ListItemButton
+                    key={item.path}
+                    selected={location.pathname === item.path}
+                    onClick={() => {
+                      navigate(item.path);
+                      if (isMobile) setDrawerOpen(false);
+                    }}
+                    sx={{
+                      mx: 1,
+                      mb: 0.5,
+                      borderRadius: theme.borderRadius.md,
+                      '&.Mui-selected': {
+                        backgroundColor: theme.colors.selected,
+                        '&:hover': {
+                          backgroundColor: theme.colors.selected,
+                        },
+                      },
+                      '&:hover': {
+                        backgroundColor: theme.colors.hover,
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ color: theme.colors.accent.primary }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        fontWeight: location.pathname === item.path ? 600 : 400,
+                      }}
+                    />
+                  </ListItemButton>
+                ))}
+              </List>
+            </>
+          )}
+
+          {/* Quick Switch Section */}
           {businesses.length > 0 && (
             <>
               <Divider sx={{ my: 2, mx: 2 }} />
@@ -238,6 +300,26 @@ const MainLayout: React.FC = () => {
                 Quick Switch
               </Typography>
               <List dense>
+                <ListItemButton
+                  selected={selectedBusinessId === null}
+                  onClick={() => selectBusiness(null)}
+                  sx={{
+                    mx: 1,
+                    mb: 0.5,
+                    borderRadius: theme.borderRadius.sm,
+                    '&.Mui-selected': {
+                      backgroundColor: theme.colors.selected,
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary="All Businesses"
+                    primaryTypographyProps={{
+                      fontWeight: selectedBusinessId === null ? 600 : 400,
+                      fontSize: '0.875rem',
+                    }}
+                  />
+                </ListItemButton>
                 {businesses.map((business) => (
                   <ListItemButton
                     key={business.id}

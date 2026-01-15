@@ -56,13 +56,24 @@ function App() {
             >
               <Route path="/" element={<DashboardPage />} />
               <Route path="/businesses" element={<BusinessesPage />} />
+              <Route path="/tasks" element={<TasksPage />} />
+              
+              {/* Business-specific routes */}
+              <Route path="/business/:businessId/emails" element={<EmailsPage />} />
+              <Route path="/business/:businessId/calendar" element={<CalendarPage />} />
+              <Route path="/business/:businessId/documents" element={<DocumentsPage />} />
+              <Route path="/business/:businessId/phone" element={<PhonePage />} />
+              <Route path="/business/:businessId/integrations" element={<IntegrationsPage />} />
+              <Route path="/business/:businessId/integrations/meshtastic/:integrationId" element={<MeshtasticMapPage />} />
+              
+              {/* Backwards compatibility - redirect old routes */}
               <Route path="/emails" element={<EmailsPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/documents" element={<DocumentsPage />} />
               <Route path="/phone" element={<PhonePage />} />
-              <Route path="/tasks" element={<TasksPage />} />
               <Route path="/integrations" element={<IntegrationsPage />} />
               <Route path="/integrations/meshtastic/:integrationId" element={<MeshtasticMapPage />} />
+              
               <Route path="/admin" element={<AdminPage />} />
             </Route>
           </Routes>

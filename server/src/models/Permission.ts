@@ -5,11 +5,14 @@ export class Permission extends Model {
   public id!: string;
   public userId!: string;
   public businessId!: string;
+  public departmentId?: string;
   public canAccessEmails!: boolean;
   public canAccessCalendar!: boolean;
   public canAccessDocuments!: boolean;
   public canAccessPhone!: boolean;
   public canManageTasks!: boolean;
+  public canAccessIntegrations!: boolean;
+  public canManageDepartments!: boolean;
   public readonly grantedAt!: Date;
 }
 
@@ -38,6 +41,15 @@ Permission.init(
         key: 'id'
       }
     },
+    departmentId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'department_id',
+      references: {
+        model: 'departments',
+        key: 'id'
+      }
+    },
     canAccessEmails: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -62,6 +74,16 @@ Permission.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       field: 'can_manage_tasks'
+    },
+    canAccessIntegrations: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: 'can_access_integrations'
+    },
+    canManageDepartments: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: 'can_manage_departments'
     },
     grantedAt: {
       type: DataTypes.DATE,

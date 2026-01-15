@@ -3,6 +3,8 @@ import authRoutes from './auth';
 import usersRoutes from './users';
 import businessesRoutes from './businesses';
 import integrationsRoutes from './integrations';
+import departmentsRoutes from './departments';
+import dashboardConfigRoutes from './dashboardConfig';
 
 const router = Router();
 
@@ -15,6 +17,8 @@ router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
 router.use('/businesses', businessesRoutes);
 router.use('/integrations', integrationsRoutes);
+router.use('/departments', departmentsRoutes);
+router.use('/dashboard-config', dashboardConfigRoutes);
 
 // Placeholder routes for other features
 router.use('/emails', (req, res) => res.json({ message: 'Email routes coming soon' }));
