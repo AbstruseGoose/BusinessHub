@@ -4,6 +4,7 @@ import { Permission } from './Permission';
 import { Integration } from './Integration';
 import { Department } from './Department';
 import { DashboardConfig } from './DashboardConfig';
+import { Project } from './Project';
 
 // Define associations
 User.belongsToMany(Business, {
@@ -45,5 +46,11 @@ DashboardConfig.belongsTo(Business, { foreignKey: 'businessId' });
 User.hasMany(DashboardConfig, { foreignKey: 'userId' });
 DashboardConfig.belongsTo(User, { foreignKey: 'userId' });
 
-export { User, Business, Permission, Integration, Department, DashboardConfig };
+Department.hasMany(Project, { foreignKey: 'departmentId', as: 'projects' });
+Project.belongsTo(Department, { foreignKey: 'departmentId', as: 'department' });
+
+Project.belongsTo(User, { foreignKey: 'managerId', as: 'manager' });
+User.hasMany(Project, { foreignKey: 'managerId', as: 'managedProjects' });
+
+export { User, Business, Permission, Integration, Department, DashboardConfig, Project };
 
