@@ -13,6 +13,7 @@ import AuthLayout from '@/components/layouts/AuthLayout';
 import LoginPage from '@/pages/auth/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
 import BusinessesPage from '@/pages/BusinessesPage';
+import DepartmentsPage from '@/pages/DepartmentsPage';
 import EmailsPage from '@/pages/EmailsPage';
 import CalendarPage from '@/pages/CalendarPage';
 import DocumentsPage from '@/pages/DocumentsPage';
@@ -57,6 +58,7 @@ function App() {
             >
               <Route path="/" element={<DashboardPage />} />
               <Route path="/businesses" element={<BusinessesPage />} />
+              <Route path="/departments" element={<DepartmentsPage />} />
               <Route path="/tasks" element={<TasksPage />} />
               
               {/* Business-specific routes */}

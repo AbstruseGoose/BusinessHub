@@ -25,8 +25,8 @@ export const authLimiter = rateLimit({
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       error: 'Too many authentication attempts',
-      message: 'Account temporarily locked due to too many failed attempts. Please try again in 15 minutes.',
-      retryAfter: req.rateLimit?.resetTime
+      message: 'Account temporarily locked due to too many failed attempts. Please try again in 15 minutes.'
+    });
   }
 });
 
@@ -38,7 +38,7 @@ export const integrationLimiter = rateLimit({
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       error: 'Too many integration operations',
-      message: 'You have reached the limit for integration operations. Please try again later.',
-      retryAfter: req.rateLimit?.resetTime
+      message: 'You have reached the limit for integration operations. Please try again later.'
+    });
   }
 });

@@ -6,6 +6,9 @@ export class Department extends Model {
   public businessId!: string;
   public name!: string;
   public description?: string;
+  public phone?: string;
+  public email?: string;
+  public managerId?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -33,6 +36,26 @@ Department.init(
     description: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    managerId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'manager_id',
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   },
   {

@@ -30,6 +30,12 @@ Integration.belongsTo(Business, { foreignKey: 'businessId' });
 Business.hasMany(Department, { foreignKey: 'businessId' });
 Department.belongsTo(Business, { foreignKey: 'businessId' });
 
+Department.belongsTo(User, { foreignKey: 'managerId', as: 'manager' });
+User.hasMany(Department, { foreignKey: 'managerId', as: 'managedDepartments' });
+
+Department.hasMany(Integration, { foreignKey: 'departmentId', as: 'integrations' });
+Integration.belongsTo(Department, { foreignKey: 'departmentId', as: 'department' });
+
 Department.hasMany(Permission, { foreignKey: 'departmentId' });
 Permission.belongsTo(Department, { foreignKey: 'departmentId' });
 

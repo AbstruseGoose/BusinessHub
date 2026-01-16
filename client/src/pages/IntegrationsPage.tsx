@@ -17,6 +17,9 @@ import {
   MenuItem,
   Switch,
   FormControlLabel,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { Add, Settings, Delete, OpenInNew } from '@mui/icons-material';
 import { Integration, IntegrationType } from '@businesshub/shared';
@@ -30,20 +33,33 @@ const IntegrationsPage: React.FC = () => {
   const effectiveBusinessId = businessId || selectedBusinessId;
   const currentBusiness = businesses.find(b => b.id === effectiveBusinessId);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [selectedDepartmentFilter, setSelectedDepartmentFilter] = useState<string>('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIntegration, setEditingIntegration] = useState<Integration | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     type: IntegrationType.CUSTOM_IFRAME,
     description: '',
+    departmentId: '',
     config: {} as any,
   });
 
   useEffect(() => {
     if (currentBusiness) {
       loadIntegrations();
+      loadDepartments();
     }
   }, [currentBusiness]);
+
+  const loadDepartments = async () => {
+    try {
+      const response = await api.get(`/departments/business/${currentBusiness?.id}`);
+      setDepartments(response.data);
+    } catch (error) {
+      console.error('Failed to load departments:', error);
+    }
+  };
 
   const loadIntegrations = async () => {
     try {
@@ -61,6 +77,7 @@ const IntegrationsPage: React.FC = () => {
         name: integration.name,
         type: integration.type,
         description: integration.description || '',
+        departmentId: (integration as any).departmentId || '',
         config: integration.config,
       });
     } else {
@@ -69,6 +86,7 @@ const IntegrationsPage: React.FC = () => {
         name: '',
         type: IntegrationType.CUSTOM_IFRAME,
         description: '',
+        departmentId: '',
         config: {},
       });
     }
@@ -141,17 +159,42 @@ const IntegrationsPage: React.FC = () => {
             Manage custom integrations for {currentBusiness?.name}
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => handleOpenDialog()}
-        >
-          Add Integration
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Filter by Department</InputLabel>
+            <Select
+              value={selectedDepartmentFilter}
+              label="Filter by Department"
+              onChange={(e) => setSelectedDepartmentFilter(e.target.value)}
+              size="small"
+            >
+              <MenuItem value="all">All Departments</MenuItem>
+              <MenuItem value="none">Business-wide Only</MenuItem>
+              {departments.map((dept) => (
+                <MenuItem key={dept.id} value={dept.id}>
+                  {dept.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => handleOpenDialog()}
+          >
+            Add Integration
+          </Button>
+        </Box>
       </Box>
 
       <Grid container spacing={3}>
-        {integrations.map((integration) => (
+        {integrations
+          .filter((integration) => {
+            if (selectedDepartmentFilter === 'all') return true;
+            if (selectedDepartmentFilter === 'none') return !(integration as any).departmentId;
+            return (integration as any).departmentId === selectedDepartmentFilter;
+          })
+          .map((integration) => (
           <Grid item xs={12} sm={6} md={4} key={integration.id}>
             <Card>
               <CardContent>
@@ -231,6 +274,22 @@ const IntegrationsPage: React.FC = () => {
             multiline
             rows={2}
           />
+          <TextField
+            fullWidth
+            select
+            label="Department (Optional)"
+            value={formData.departmentId}
+            onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+            margin="normal"
+            helperText="Assign this integration to a specific department, or leave blank for business-wide access"
+          >
+            <MenuItem value="">None (Business-wide)</MenuItem>
+            {departments.map((dept) => (
+              <MenuItem key={dept.id} value={dept.id}>
+                {dept.name}
+              </MenuItem>
+            ))}
+          </TextField>
 
           {/* URL Configuration */}
           {(

@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { Department } from '../models/Department';
+import { User } from '../models/User';
+import { Integration } from '../models/Integration';
 import { authenticate, authorize } from '../middleware/auth';
 import { UserRole } from '@businesshub/shared';
 
@@ -11,6 +13,19 @@ router.get('/business/:businessId', authenticate, async (req, res) => {
     const { businessId } = req.params;
     const departments = await Department.findAll({
       where: { businessId },
+      include: [
+        {
+          model: User,
+          as: 'manager',
+          attributes: ['id', 'firstName', 'lastName', 'email']
+        },
+        {
+          model: Integration,
+          as: 'integrations',
+          where: { isActive: true },
+          required: false
+        }
+      ],
       order: [['name', 'ASC']]
     });
     res.json(departments);
@@ -23,11 +38,14 @@ router.get('/business/:businessId', authenticate, async (req, res) => {
 // Create a new department
 router.post('/', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), async (req, res) => {
   try {
-    const { businessId, name, description } = req.body;
+    const { businessId, name, description, phone, email, managerId } = req.body;
     const department = await Department.create({
       businessId,
       name,
-      description
+      description,
+      phone,
+      email,
+      managerId
     });
     res.status(201).json(department);
   } catch (error) {
@@ -40,14 +58,14 @@ router.post('/', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), asyn
 router.put('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.MANAGER), async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name, description, phone, email, managerId } = req.body;
     
     const department = await Department.findByPk(id);
     if (!department) {
       return res.status(404).json({ error: 'Department not found' });
     }
 
-    await department.update({ name, description });
+    await department.update({ name, description, phone, email, managerId });
     res.json(department);
   } catch (error) {
     console.error('Error updating department:', error);

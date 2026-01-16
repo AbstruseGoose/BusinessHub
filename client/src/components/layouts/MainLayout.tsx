@@ -31,6 +31,7 @@ import {
   Logout,
   ChevronLeft,
   Extension,
+  AccountTree,
 } from '@mui/icons-material';
 import { theme } from '@/theme/colors';
 import { useAuthStore } from '@/stores/authStore';
@@ -80,6 +81,7 @@ const MainLayout: React.FC = () => {
   const menuItems = [
     { path: '/', label: 'Dashboard', icon: <Dashboard />, section: 'main' },
     { path: '/businesses', label: 'Businesses', icon: <Business />, section: 'main' },
+    { path: '/departments', label: 'Departments', icon: <AccountTree />, section: 'main' },
     { path: '/tasks', label: 'Tasks', icon: <CheckCircle />, section: 'main' },
   ];
 

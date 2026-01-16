@@ -5,6 +5,7 @@ import { IntegrationType } from '@businesshub/shared';
 export class Integration extends Model {
   public id!: string;
   public businessId!: string;
+  public departmentId?: string;
   public name!: string;
   public type!: IntegrationType;
   public description!: string | null;
@@ -29,6 +30,15 @@ Integration.init(
         key: 'id'
       },
       field: 'business_id'
+    },
+    departmentId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'departments',
+        key: 'id'
+      },
+      field: 'department_id'
     },
     name: {
       type: DataTypes.STRING,
